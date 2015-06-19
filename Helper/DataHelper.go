@@ -45,11 +45,11 @@ func Populate(collectionName string, query map[string]interface{}, column map[st
 	return result, err
 }
 
-func PopulateAsObject(result interface{}, collectionName string, query map[string]interface{}) {
+func PopulateAsObject(result interface{}, collectionName string, query map[string]interface{}, skip int, limit int) {
 	sess, err := GetDb()
 	defer sess.Close()
 	collection := sess.DB(DB).C(collectionName)
-	err = collection.Find(query).All(result)
+	err = collection.Find(query).Skip(skip).Limit(limit).All(result)
 
 	if err != nil {
 		log.Fatal(err)

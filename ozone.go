@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	//"gopkg.in/mgo.v2"
-	. "github.com/eaciit/ozone/helper"
+	// . "github.com/yakuza1308/local_ozone/helper"
 	"gopkg.in/mgo.v2/bson"
-	// . "ozone/helper"
+	. "local_ozone/helper"
 )
 
 type msg struct {
@@ -45,14 +45,15 @@ func main() {
 	//Select Msg Column Only
 	d := SelectedColumn("msg") //More than one column ? use this : SelectedColumn("msg","count")
 	fmt.Println(d)
-	dataList, _ = Populate("test", nil, d, 0, 0)
+	dataList, _ = Populate("test", nil, d, 0, 5)
 	for _, d := range dataList {
 		fmt.Println(d)
 	}
-
+	fmt.Println("-------------------------------------------------")
+	fmt.Println("List Data As Object :")
 	var list []msg
-	PopulateAsObject(&list, "test", nil)
-	fmt.Println(list)
-	fmt.Println(list[0].Msg)
-	fmt.Println(list[0].Count)
+	PopulateAsObject(&list, "test", nil, 0, 2)
+	for _, x := range list {
+		fmt.Println(x.Msg)
+	}
 }
