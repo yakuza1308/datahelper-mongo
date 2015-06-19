@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	//"gopkg.in/mgo.v2"
-	// . "github.com/yakuza1308/local_ozone/helper"
 	"gopkg.in/mgo.v2/bson"
+	//"gopkg.in/mgo.v2"
 	. "local_ozone/helper"
 )
 
@@ -52,8 +51,20 @@ func main() {
 	fmt.Println("-------------------------------------------------")
 	fmt.Println("List Data As Object :")
 	var list []msg
-	PopulateAsObject(&list, "test", nil, 0, 2)
+	sort := []string{"-msg", "-count"}
+	PopulateAsObject(&list, "test", nil, 0, 5, sort...)
 	for _, x := range list {
-		fmt.Println(x.Msg)
+		fmt.Printf("%v | %v\n", x.Msg, x.Count)
 	}
+	//Aggregate
+	fmt.Println("-------------------------------------------------")
+	fmt.Println("Aggregate Result :")
+	var pipes []bson.M
+	pipes = append(pipes, bson.M{"$match": bson.M{"msg": "Hello from go [updated]"}})
+	pipes = append(pipes, bson.M{"$group": bson.M{"_id": "$msg"}})
+	AggregateResult, _ := Aggregate("test", pipes)
+	for _, a := range AggregateResult {
+		fmt.Println(a)
+	}
+
 }

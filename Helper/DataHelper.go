@@ -33,23 +33,23 @@ func SelectedColumn(columnName ...string) bson.M {
 
 }
 
-func Populate(collectionName string, query map[string]interface{}, column map[string]interface{}, skip int, limit int) ([]bson.D, error) {
+func Populate(collectionName string, query map[string]interface{}, column map[string]interface{}, skip int, limit int, sort ...string) ([]bson.D, error) {
 	sess, err := GetDb()
 	defer sess.Close()
 	collection := sess.DB(DB).C(collectionName)
 	var result []bson.D
-	err = collection.Find(query).Select(column).Skip(skip).Limit(limit).All(&result)
+	err = collection.Find(query).Select(column).Skip(skip).Limit(limit).Sort(sort...).All(&result)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return result, err
 }
 
-func PopulateAsObject(result interface{}, collectionName string, query map[string]interface{}, skip int, limit int) {
+func PopulateAsObject(result interface{}, collectionName string, query map[string]interface{}, skip int, limit int, sort ...string) {
 	sess, err := GetDb()
 	defer sess.Close()
 	collection := sess.DB(DB).C(collectionName)
-	err = collection.Find(query).Skip(skip).Limit(limit).All(result)
+	err = collection.Find(query).Skip(skip).Limit(limit).Sort(sort...).All(result)
 
 	if err != nil {
 		log.Fatal(err)
@@ -62,6 +62,18 @@ func PopulateOneRow(collectionName string, query map[string]interface{}, column 
 	collection := sess.DB(DB).C(collectionName)
 	var result bson.D
 	err = collection.Find(query).Select(column).One(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result, err
+}
+
+func Aggregate(collectionName string, pipe interface{}) ([]bson.D, error) {
+	var result []bson.D
+	sess, err := GetDb()
+	defer sess.Close()
+	collection := sess.DB(DB).C(collectionName)
+	err = collection.Pipe(pipe).All(&result)
 	if err != nil {
 		log.Fatal(err)
 	}
