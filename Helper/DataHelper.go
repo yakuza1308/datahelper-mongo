@@ -1,11 +1,9 @@
 package helper
 
 import (
-	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"log"
-	"reflect"
 )
 
 var (
@@ -25,6 +23,7 @@ func GetDb() (*mgo.Session, error) {
 	sess.SetSafe(&mgo.Safe{})
 	return sess, err
 }
+
 func SelectedColumn(columnName ...string) bson.M {
 	result := make(bson.M, len(columnName))
 	for _, d := range columnName {
@@ -33,6 +32,7 @@ func SelectedColumn(columnName ...string) bson.M {
 	return result
 
 }
+
 func Populate(collectionName string, query map[string]interface{}, column map[string]interface{}, skip int, limit int) ([]bson.D, error) {
 	sess, err := GetDb()
 	defer sess.Close()
@@ -45,24 +45,17 @@ func Populate(collectionName string, query map[string]interface{}, column map[st
 	return result, err
 }
 
-type msg struct {
-	Id    bson.ObjectId `bson:"_id"`
-	Msg   string        `bson:"msg"`
-	Count int           `bson:"count"`
-}
-
-func PopulateAsPointer(res interface{}, collectionName string, query map[string]interface{}) {
-	result := reflect.MakeSlice(reflect.TypeOf(res), 0, 0).Interface().([]msg)
+func PopulateAsObject(result interface{}, collectionName string, query map[string]interface{}) {
 	sess, err := GetDb()
 	defer sess.Close()
 	collection := sess.DB(DB).C(collectionName)
-	err = collection.Find(query).All(&result)
+	err = collection.Find(query).All(result)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(reflect.TypeOf(result))
-
 }
+
 func PopulateOneRow(collectionName string, query map[string]interface{}, column map[string]interface{}) (bson.D, error) {
 	sess, err := GetDb()
 	defer sess.Close()
@@ -74,6 +67,7 @@ func PopulateOneRow(collectionName string, query map[string]interface{}, column 
 	}
 	return result, err
 }
+
 func Save(collectionName string, docs ...interface{}) {
 	sess, _ := GetDb()
 	defer sess.Close()
@@ -83,6 +77,7 @@ func Save(collectionName string, docs ...interface{}) {
 		log.Fatal(err)
 	}
 }
+
 func Update(collectionName string, query map[string]interface{}, update map[string]interface{}) {
 	sess, _ := GetDb()
 	defer sess.Close()
@@ -92,6 +87,7 @@ func Update(collectionName string, query map[string]interface{}, update map[stri
 		log.Fatal(err)
 	}
 }
+
 func Delete(collectionName string, query map[string]interface{}) {
 	sess, _ := GetDb()
 	defer sess.Close()
