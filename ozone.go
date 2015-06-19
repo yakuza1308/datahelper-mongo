@@ -49,4 +49,10 @@ func main() {
 	for _, d := range dataList {
 		fmt.Println(d)
 	}
+
+	var list []msg
+	PopulateAsObject(&list, "test", nil)
+	fmt.Println(list)
+	fmt.Println(list[0].Msg)
+	fmt.Println(list[0].Count)
 }
