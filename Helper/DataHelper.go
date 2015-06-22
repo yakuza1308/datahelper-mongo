@@ -94,7 +94,7 @@ func Update(collectionName string, query map[string]interface{}, update map[stri
 	sess, _ := GetDb()
 	defer sess.Close()
 	collection := sess.DB(DB).C(collectionName)
-	err := collection.Update(query, update)
+	_, err := collection.UpdateAll(query, update)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -104,7 +104,7 @@ func Delete(collectionName string, query map[string]interface{}) {
 	sess, _ := GetDb()
 	defer sess.Close()
 	collection := sess.DB(DB).C(collectionName)
-	err := collection.Remove(query)
+	_, err := collection.RemoveAll(query)
 	if err != nil {
 		log.Fatal(err)
 	}
